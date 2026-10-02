@@ -1,2 +1,4 @@
 # mem0ai-4j
-Java SDK for Mem0
+
+[![Maven Central](https://shields.io)](https://sonatype.com)
+
