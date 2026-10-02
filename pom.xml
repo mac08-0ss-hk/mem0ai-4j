@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.ashok-mac</groupId>
+    <groupId>io.github.mac08-0ss-hk</groupId>
     <artifactId>mem0ai4j-parent</artifactId>
     <version>0.0.1</version>
     <packaging>pom</packaging>
