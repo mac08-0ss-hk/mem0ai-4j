@@ -68,17 +68,32 @@ public class DefaultMem0Client implements Mem0Client {
 
     @Override
     public List<MemoryHistoryRecord> history(String memoryId) {
-        return List.of();
+        Objects.requireNonNull(memoryId, "memoryId");
+        String path = apiProfile == Mem0ApiProfile.SELF_HOSTED_SERVER
+                ? "/memories/" + memoryId + "/history"
+                : "/v1/memories/" + memoryId + "/history";
+        MemoryHistoryRecord[] records = executor.get(path, MemoryHistoryRecord[].class);
+        return records == null ? List.of() : List.of(records);
     }
 
     @Override
     public MemoryRecord update(String memoryId, UpdateMemoryRequest request) {
-        return null;
+        Objects.requireNonNull(request, "request");
+        Mem0RequestValidator.validate(request);
+        if (apiProfile == Mem0ApiProfile.SELF_HOSTED_SERVER) {
+            return executor.patch("/memories/" + memoryId, request, MemoryRecord.class);
+        }
+        return executor.patch("/v1/memories/" + memoryId + "/", request, MemoryRecord.class);
     }
 
     @Override
     public DeleteMemoryResponse delete(String memoryId, boolean deleteLinked) {
-        return null;
+        if (apiProfile == Mem0ApiProfile.SELF_HOSTED_SERVER) {
+            return executor.delete("/memories/" + memoryId , DeleteMemoryResponse.class);
+        }
+        String path = deleteLinked ? "/v1/memories/" + memoryId +
+                "/?delete_linked=true" : "/v1/memories" + memoryId + "/";
+        return executor.delete(path, DeleteMemoryResponse.class);
     }
 
     @Override
