@@ -36,12 +36,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jackson.version>3.1.5</jackson.version>
-        <langchain4j.version>1.21.0</langchain4j.version>
+        <jackson.bom.version>3.2.3</jackson.bom.version>
+        <langchain4j.version>1.20.2</langchain4j.version>
         <junit.version>5.10.3</junit.version>
     </properties>
 
     <modules>
         <module>mem0ai4j-core</module>
+        <module>mem0ai4j-langchain4j</module>
 
     </modules>
 
@@ -60,7 +62,15 @@
             <dependency>
                 <groupId>tools.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>3.2.3</version>
+                <version>${jackson.bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-bom -->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-bom</artifactId>
+                <version>${langchain4j.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

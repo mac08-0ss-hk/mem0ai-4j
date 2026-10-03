@@ -10,14 +10,20 @@
     </parent>
 
 
-    <groupId>io.github.mac08-0ss-hk</groupId>
     <artifactId>mem0ai4j-core</artifactId>
-    <version>0.0.1</version>
     <name>mem0ai4j-core</name>
-    <description>mem0ai4j-core</description>
+    <description>Mem0 Java SDK Core Client</description>
 
 
     <dependencies>
+        <!-- Use the tools.jackson group for Jackson 3 -->
+        <!-- Jackson Jr support if you use it -->
+<!--        <dependency>-->
+<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--            <artifactId>jackson-annotations</artifactId>-->
+<!--            <version>2.21</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>tools.jackson.jr</groupId>
             <artifactId>jackson-jr-annotation-support</artifactId>
@@ -38,6 +44,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
