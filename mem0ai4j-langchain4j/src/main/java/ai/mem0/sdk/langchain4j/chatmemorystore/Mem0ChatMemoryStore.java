@@ -1,6 +1,7 @@
 package ai.mem0.sdk.langchain4j.chatmemorystore;
 
 import ai.mem0.sdk.client.Mem0Client;
+import ai.mem0.sdk.model.memory.AddMemoryRequest;
 import ai.mem0.sdk.model.memory.MemoryMessage;
 import dev.langchain4j.data.message.*;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
@@ -44,13 +45,33 @@ public final class Mem0ChatMemoryStore implements ChatMemoryStore {
     }
 
     @Override
-    public void updateMessages(Object o, List<ChatMessage> list) {
+    public void updateMessages(Object memoryId, List<ChatMessage> messages) {
+        List<ChatMessage> snapshot = List.copyOf(messages);
+        snapshots.put(memoryId, snapshot);
+        List<MemoryMessage> memoryMessages = toMemoryMessages(snapshot);
+        if (memoryMessages.isEmpty()) {
+            return;
+        }
+        AddMemoryRequest.Builder requestBuilder = AddMemoryRequest.builder()
+                .appId(appId)
+                .userId(scopeToMemoryId ? String.valueOf(memoryId) : null)
+                .infer(infer)
+                .messages(memoryMessages)
+                .metadata(Map.of("chat_memory_store", true, "memory_id", String.valueOf(memoryId)));
 
+
+        applyIfPresent(customInstructionsProvider, memoryId, snapshot, requestBuilder::customInstructions);
+        applyIfPresent(agentCustomInstructionsProvider, memoryId, snapshot, requestBuilder::agentCustomInstructions);
+        List<Map<String, String>> categories = applyProvider(customCategoriesProvider, memoryId, snapshot);
+        if (categories != null && !categories.isEmpty()) {
+            requestBuilder.customCategories(categories);
+        }
+        client.add(requestBuilder.build());
     }
 
     @Override
-    public void deleteMessages(Object o) {
-
+    public void deleteMessages(Object memoryId) {
+        snapshots.remove(memoryId);
     }
 
     public static Builder builder() {
