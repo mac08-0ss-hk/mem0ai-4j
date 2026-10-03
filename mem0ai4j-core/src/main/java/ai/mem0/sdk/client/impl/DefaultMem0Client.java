@@ -98,37 +98,65 @@ public class DefaultMem0Client implements Mem0Client {
 
     @Override
     public DeleteMemoriesResponse deleteAll(String userId, String agentId, String appId, String runId, String orgId, String projectId) {
-        return null;
+       Mem0RequestValidator.validateDeleteAll(userId, agentId, appId, runId, orgId, projectId);
+       if (apiProfile == Mem0ApiProfile.SELF_HOSTED_SERVER) {
+           StringBuilder selfHostedPath = new StringBuilder("/memories");
+           boolean hasQuery = false;
+           hasQuery = appendQuery(selfHostedPath, hasQuery, "user_id", userId == null || userId.isBlank() ? appId : userId);
+           hasQuery = appendQuery(selfHostedPath, hasQuery, "agent_id", agentId);
+           appendQuery(selfHostedPath, hasQuery, "run_id", runId);
+           return executor.delete(selfHostedPath.toString(), DeleteMemoriesResponse.class);
+       }
+        StringBuilder path = new StringBuilder("/v1/memories");
+        boolean hasQuery = false;
+        hasQuery = appendQuery(path, hasQuery, "user_id", userId);
+        hasQuery = appendQuery(path, hasQuery, "agent_id", agentId);
+        hasQuery = appendQuery(path, hasQuery, "app_id", appId);
+        hasQuery = appendQuery(path, hasQuery, "run_id", runId);
+        hasQuery = appendQuery(path, hasQuery, "org_id", orgId);
+        appendQuery(path, hasQuery, "project_id", projectId);
+        return executor.delete(path.toString(), DeleteMemoriesResponse.class);
     }
 
     @Override
     public BatchOperationResponse batchUpdate(BatchUpdateMemoriesRequest request) {
-        return null;
+        Objects.requireNonNull(request, "request");
+        Mem0RequestValidator.validate(request);
+        return executor.put("/v1/batch/", request, BatchOperationResponse.class);
     }
 
     @Override
     public BatchOperationResponse batchDelete(BatchDeleteMemoriesRequest request) {
-        return null;
+        Objects.requireNonNull(request, "request");
+        Mem0RequestValidator.validate(request);
+        return executor.delete("/v1/batch/", request, BatchOperationResponse.class);
     }
 
     @Override
     public CreateMemoryExportResponse createMemoryExport(CreateMemoryExportRequest request) {
-        return null;
+        Objects.requireNonNull(request, "request");
+        Mem0RequestValidator.validate(request);
+        return executor.post("/v1/exports/", request, CreateMemoryExportResponse.class);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getMemoryExport(GetMemoryExportRequest request) {
-        return Map.of();
+        Objects.requireNonNull(request, "request");
+        Mem0RequestValidator.validate(request);
+        return executor.post("/v1/exports/get", request, Map.class);
     }
 
     @Override
     public FeedbackResponse feedback(FeedbackRequest request) {
-        return null;
+        Objects.requireNonNull(request, "request");
+        Mem0RequestValidator.validate(request);
+        return executor.post("/v1/feedback/", request, FeedbackResponse.class);
     }
 
     @Override
     public EventResponse event(String eventId) {
-        return null;
+        return executor.get("/v1/events/" + eventId + "/", EventResponse.class);
     }
 
     @Override
